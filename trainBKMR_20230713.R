@@ -132,7 +132,12 @@ analysis_columns <- train_data %>%
     pregest_Vanadium, pregest_Zinc, pregest_Zirconium, anomalies
   ) %>%
   mutate(anomalies = as.factor(anomalies)) %>%
-  mutate(anomalies = as.numeric(anomalies))
+  data.frame() %>%
+  mutate(anomalies = case_when(
+    anomalies == "N" ~ 1,
+    anomalies == "Y" ~ 0,
+    TRUE ~ NA_integer_
+  ))
 
 # Register parallel processing
 registerDoParallel()
@@ -140,7 +145,7 @@ registerDoParallel()
 # Prepare variables for the BKMR model
 
 # dependent variable
-y <- as.numeric(unlist(analysis_columns[, 28]))
+y <- as.vector(analysis_columns[, 28])
 
 # scale exposure variable
 expos <- data.matrix(analysis_columns[, 1:27])
