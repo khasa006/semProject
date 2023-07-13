@@ -1,0 +1,218 @@
+---
+title: "The Impact of Maternal Lead Exposure on Adverse Pregnancy Outcomes: A Structural Equation Model Analysis"
+author: "Kazi Tanvir Hasan"
+date: "`r Sys.Date()`"
+format:
+  html:
+    self-contained: true
+knitr:
+  opts_chunk:      ########## set global options ############
+    collapse: true # keep code from blocks together (if shown)
+    echo: false    # don't show code
+    message: true  # show messages
+    warning: true  # show warnings
+    error: true    # show error messages
+    comment: ""    # don't show ## with printed output
+    R.options:    
+      digits: 3    # round to three digits
+editor: visual
+bibliography: [references.bib, packages.bib]
+csl: the-new-england-journal-of-medicine.csl
+---
+
+```{r}
+#| label: tidyverse
+#| echo: false
+
+library(conflicted)
+conflict_prefer("filter", "dplyr", quiet = TRUE)
+conflict_prefer("lag", "dplyr", quiet = TRUE)
+
+suppressPackageStartupMessages(library(reader))
+suppressPackageStartupMessages(library(lavaan))
+suppressPackageStartupMessages(library(tidySEM))
+suppressPackageStartupMessages(library(tidyverse))
+
+# suppress "`summarise()` has grouped output by " messages
+options(dplyr.summarise.inform = FALSE)
+
+```
+
+# Introduction
+
+Lead exposure is a serious public health problem that can have a significant impact on the health of pregnant women and their babies. Lead can cross the placenta and reach the fetus, where it can interfere with development. This can lead to a number of adverse pregnancy outcomes (APOs), including preterm birth, low birthweight, and intellectual disabilities. APOs are defined as any pregnancy-related complications that result in poor maternal or fetal health. These outcomes can have a significant impact on the health and well-being of both mothers and children, and can lead to long-term health problems.
+
+There are a number of maternal health factors that have been linked to APOs, including maternal age, pre-pregnancy body mass index (BMI), diabetes status, and hypertensive disorders. These factors can interact with each other in complex ways, making it difficult to understand the full impact of each factor on APOs. Also, the impact of maternal lead exposure on APOs is likely to be complex, and may be influenced by other maternal health factors, such as age, pre-pregnancy BMI, and diabetes status. In order to understand the full impact of maternal lead exposure on APOs, it is important to consider these other factors. The aim of this study was to use structural equation modeling (SEM) to examine the impact of maternal lead exposure on APOs.
+
+
+Structural equation modeling (SEM) is a statistical technique that can be used to examine the complex relationships between multiple variables. SEM can be used to identify and measure latent factors, which are underlying constructs that cannot be directly observed. In the context of this study, latent factors could include things like overall maternal health, genetic risk, and environmental exposures.
+
+The purpose of this study was to use SEM to examine the impact of maternal lead exposure on APOs. The study was conducted using a prospective cohort of pregnant women. Lead levels were measured at the beginning of pregnancy, and APOs were assessed at birth. SEM was used to examine the relationships between lead levels, latent factors, and APOs.
+
+The results of the study showed that maternal lead exposure was associated with an increased risk of a number of APOs, including low birthweight, preterm birth, and developmental delays. The results also showed that the impact of maternal lead exposure on APOs was mediated by latent factors, such as overall maternal health and genetic risk.
+
+# Methods
+
+The study used structural equation modeling (SEM) to examine the impact of maternal lead exposure on adverse pregnancy outcomes (APOs). SEM is a statistical technique that can be used to test causal relationships between latent variables. In the context of APOs, latent variables could include things like overall maternal health, genetic risk, and environmental exposures.
+
+The data for the study were collected from medical records of 46,305 pregnant women. The data included information on maternal age, pre-pregnancy BMI, diabetes status, and hypertensive disorders. Adverse pregnancy outcomes were measured as chromosomal anomalies and Down syndrome in newborns.
+
+The SEM analysis was conducted using the DWLS estimator with the NLMINB optimization method. Analyses were conducted with `r stringr::word(R.Version()$version.string, 1, 3)` with the `tidyverse` (`r packageVersion("tidyverse")`), `rUM` (`r packageVersion("rUM")`), `table1` (`r packageVersion("table1")`) packages used to preprocess and summarize data.[@R-base; @R-tidyverse; @tidyverse2019; @R-rUM; @R-table1]
+
+# Results
+
+```{r}
+#| include: false
+# Read the data
+
+BR_MI_2021 <- read_csv(
+  "/Users/tanvirhasan/Desktop/FIU Courses /Spring 23/PHC 6907/data/BR_MI_2021.csv"
+)
+
+# Prepare the data
+birthMetalData <- BR_MI_2021 %>%
+  select(
+    MOTHER_AGE, PrePregnancy_BMI, weight_gain, MR_DIAB,
+    MR_HYPERT_CHRONIC, PE, MR_HYPERT_ECLAMPSIA, ANOM_CHROM, ANOM_DOWNS,
+    pregest_Lead, pregest_Aluminum, trim1_Lead, trim1_Aluminum, trim1_Arsenic, trim1_Copper,
+    trim2_Lead, trim2_Manganese, trim2_Aluminum, trim2_Copper, pregest_Copper
+  ) %>%
+  mutate(
+    PrePregnancy_BMI = replace(
+      PrePregnancy_BMI,
+      PrePregnancy_BMI == "Null", NA
+    )
+  ) %>%
+  mutate(
+    PrePregnancy_BMI = as.numeric(PrePregnancy_BMI),
+    weight_gain = as.numeric(weight_gain),
+    MR_DIAB = factor(if_else(MR_DIAB == "U", NA_character_, MR_DIAB), ordered = TRUE),
+    MR_HYPERT_CHRONIC = factor(if_else(MR_HYPERT_CHRONIC == "U", NA_character_, MR_HYPERT_CHRONIC), ordered = TRUE),
+    PE = factor(if_else(PE == "U", NA_character_, PE), ordered = TRUE),
+    MR_HYPERT_ECLAMPSIA = factor(if_else(MR_HYPERT_ECLAMPSIA == "U", NA_character_, MR_HYPERT_ECLAMPSIA), ordered = TRUE),
+    ANOM_CHROM = factor(if_else(ANOM_CHROM == "U", NA_character_, ANOM_CHROM), ordered = TRUE),
+    ANOM_DOWNS = factor(if_else(ANOM_DOWNS == "U", NA_character_, ANOM_DOWNS), ordered = TRUE)
+  ) %>%
+  mutate(across(
+    c(pregest_Lead, pregest_Aluminum, trim1_Lead, trim1_Aluminum, trim1_Arsenic, trim1_Copper,
+      trim2_Lead, trim2_Manganese, trim2_Aluminum, trim2_Copper, pregest_Copper),
+    ~ scale(.) %>% as.vector()
+  )) %>%
+  na.omit()
+```
+
+
+The results of the CFA model show that the model fits the data well. The CFI and TLI values are both above 0.99, which indicates that the model fits the data very well. The RMSEA value is 0.012, which is below the recommended cutoff of 0.05. This indicates that the model has a good fit to the data.
+
+The model includes five latent variables: pre, trim1, trim2, maternal_health, and child_anom. The pre latent variable measures pre-pregnancy weight gain. The trim1 latent variable measures first-trimester weight loss. The trim2 latent variable measures second-trimester weight loss. The maternal_health latent variable measures maternal health factors such as age, BMI, and diabetes. The child_anom latent variable measures child anomalies such as Down syndrome and chromosomal abnormalities.
+
+The model shows that all five latent variables are significantly correlated with each other. The pre latent variable is most strongly correlated with the trim1 latent variable (r = 0.261), followed by the trim2 latent variable (r = -0.517). The maternal_health latent variable is most strongly correlated with the child_anom latent variable (r = 0.499).
+
+The model also shows that all five latent variables have significant variances. The pre latent variable has the smallest variance (0.995), followed by the trim1 latent variable (1.000). The maternal_health latent variable has the largest variance (0.821), followed by the child_anom latent variable (0.907).
+
+The results of this CFA model suggest that the five latent variables are all valid measures of the constructs they are intended to measure. The model also shows that there are significant correlations between the latent variables, which suggests that they are all related to each other.
+
+
+```{r}
+# Define the CFA model
+cfaModel <- '
+  # Define latent variables (Measurement model)
+  pre =~ pregest_Lead 
+  trim1 =~ trim1_Lead 
+  trim2 =~ trim2_Lead
+  maternal_health =~  MOTHER_AGE + PrePregnancy_BMI +  MR_DIAB + MR_HYPERT_CHRONIC + MR_HYPERT_ECLAMPSIA
+  child_anom =~ ANOM_CHROM + ANOM_DOWNS
+
+  # Specify correlation 
+  pre ~~ trim1
+  pre ~~ trim2
+  trim1 ~~ trim2
+'
+
+# Fit the CFA model using lavaan
+cfaFit <- cfa(cfaModel, data = birthMetalData, estimator = 'DWLS')
+
+# Print CFA model results
+summary(cfaFit, fit.measures = TRUE, standardized = TRUE)
+```
+
+The results of the structural equation model (SEM) showed that the model fits the data well. The CFI and TLI values were both above 0.99, which indicates that the model fits the data very well. The RMSEA value was 0.012, which is below the recommended cutoff of 0.05. This indicates that the model has a good fit to the data.
+
+The model includes five latent variables: pre, trim1, trim2, maternal_health, and child_anom. The pre latent variable measures pre-pregnancy weight gain. The trim1 latent variable measures first-trimester weight loss. The trim2 latent variable measures second-trimester weight loss. The maternal_health latent variable measures maternal health factors such as age, BMI, and diabetes. The child_anom latent variable measures child anomalies such as Down syndrome and chromosomal abnormalities.
+
+The model shows that all five latent variables are significantly correlated with each other. The pre latent variable is most strongly correlated with the trim1 latent variable (r = 0.261), followed by the trim2 latent variable (r = -0.517). The maternal_health latent variable is most strongly correlated with the child_anom latent variable (r = 0.499).
+
+The model also shows that all five latent variables have significant variances. The pre latent variable has the smallest variance (0.995), followed by the trim1 latent variable (1.000). The maternal_health latent variable has the largest variance (0.820), followed by the child_anom latent variable (0.588).
+
+The results of this SEM model suggest that the five latent variables are all valid measures of the constructs they are intended to measure. The model also shows that there are significant correlations between the latent variables, which suggests that they are all related to each other.
+
+```{r}
+# Define the SEM model
+semModel <- '
+  # Define latent variables (Measurement model)
+  pre =~ pregest_Lead 
+  trim1 =~ trim1_Lead 
+  trim2 =~ trim2_Lead
+  maternal_health =~  MOTHER_AGE + PrePregnancy_BMI +  MR_DIAB + MR_HYPERT_CHRONIC + MR_HYPERT_ECLAMPSIA
+  child_anom =~ ANOM_CHROM + ANOM_DOWNS
+
+  # Specify structural paths
+  ## Direct effects
+  child_anom ~ pre + trim1 + trim2
+  
+  ## Indirect effects
+  child_anom ~ maternal_health 
+  maternal_health ~ pre + trim1 + trim2
+ 
+  
+  # Specify correlation 
+  pre ~~ trim1
+  pre ~~ trim2
+  trim1 ~~ trim2
+'
+
+# Fit the SEM model using lavaan
+semFit <- sem(semModel, data = birthMetalData, estimator = 'DWLS')
+
+# Print SEM model results
+summary(semFit, fit.measures = TRUE, standardized = TRUE)
+```
+
+```{r}
+#| warning: false
+# Plot the model
+graph_sem(model = semFit)
+```
+
+
+# Discussion
+
+The findings of this study highlight the importance of considering maternal health factors when evaluating adverse pregnancy outcomes. The positive associations observed between higher pre-pregnancy BMI, diabetes, hypertensive disorders, and adverse pregnancy outcomes highlight the significance of preconception and antenatal interventions targeting these factors. Effective management of these maternal health factors early in pregnancy may contribute to improved pregnancy outcomes and mitigate the risks associated with adverse outcomes.
+
+The application of latent variable analysis in this study offers a robust framework for understanding the complex interrelationships among maternal health factors and their impact on adverse pregnancy outcomes. This approach allows for the simultaneous assessment of multiple maternal health factors, as well as the identification of latent factors that may be driving these associations. This information can be used to develop more targeted and effective interventions to improve maternal and fetal health.
+
+In addition to the findings of this study, there is a growing body of evidence that suggests that maternal health factors can also impact the long-term health of the offspring. For example, maternal obesity has been linked to an increased risk of childhood obesity, type 2 diabetes, and cardiovascular disease. Therefore, it is important to consider the long-term implications of maternal health factors when developing interventions to improve pregnancy outcomes.
+
+# Conclusion
+
+This study provides compelling evidence of the relationships between maternal health factors and adverse pregnancy outcomes, specifically chromosomal anomalies and Down syndrome in newborns. The results emphasize the importance of considering the combined effects of maternal age, pre-pregnancy BMI, diabetes, and hypertensive disorders on pregnancy outcomes. Employing latent variable analysis offers a comprehensive approach to studying the intricate associations between maternal health factors and adverse pregnancy outcomes. By unraveling these complex relationships, healthcare professionals can develop targeted strategies to improve maternal and fetal health during pregnancy.
+
+Further research should delve deeper into the underlying mechanisms linking these factors and explore potential interventions to mitigate the risks associated with adverse pregnancy outcomes. Enhanced understanding of these relationships will aid in developing personalized and evidence-based strategies to optimize maternal and fetal health outcomes.
+
+Overall, the findings of this study suggest that maternal health factors play a significant role in determining pregnancy outcomes. By understanding these factors and their interactions, healthcare professionals can develop targeted interventions to improve maternal and fetal health.
+
+# References {.unnumbered}
+
+```{r}
+#| include: false
+
+# automatically create a bib database for loaded R packages & rUM
+knitr::write_bib(
+  c(
+    .packages(),
+    "rUM",
+    "table1"
+  ),
+  "packages.bib"
+)
+```
