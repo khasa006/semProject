@@ -1,0 +1,18 @@
+## Data Analysis
+
+Lasso regression analysis was conducted to identify the most important predictors of child anomalies. The dataset was preprocessed to handle missing values, select relevant columns, and scale numeric predictors. The data was split into training and testing sets using 5-fold cross-validation. For each of the three time periods (pregestational, trim1, and trim2), a logistic regression model with Lasso regularization was specified. Hyperparameter tuning was performed to select the best model based on one standard error rule. The selected Lasso model was trained on the training data.
+
+The performance of the trained Lasso models was evaluated on the training data by calculating accuracy, ROC AUC, sensitivity, specificity, and generating a confusion matrix. Additionally, variable importance was assessed for each model using the vip package to identify the top important features.
+
+Finally, the trained Lasso models were used to make predictions on the test dataset, and their performance was evaluated on the test data using density plots, ROC curves, and ROC AUC. Variable importance for the test data was also assessed to understand the significance of predictors.
+
+Based on the results of lasso regression, we found that lasso regression with trimester 1 has better prediction accuracy than other two models. We used top three most important trimester 1 metals in our SEM analysis.
+
+Structural Equation Modeling (SEM) was conducted to examine the relationships among latent variables and observed variables in the birthMetalData dataset. Initially, a Confirmatory Factor Analysis (CFA) model was specified, with three latent variables: trim1, maternal_health, and child_anom. These latent variables were indicated by sets of observed variables, forming measurement models.
+
+Next, a Structural Equation Model (SEM) was extended from the CFA model to include structural paths. Direct effects were specified between the trim1 and child_anom latent variables. Additionally, indirect effects were specified between the trim1 and maternal_health latent variables and the child_anom latent variable.
+
+The SEM model was fitted to the data using the diagonally weighted least squares (DWLS) estimator. Model fit measures, such as chi-square, degrees of freedom, Root Mean Square Error of Approximation (RMSEA), Comparative Fit Index (CFI), and Tucker-Lewis Index (TLI), were computed to assess model fit. Standardized estimates for factor loadings and path coefficients were also examined.
+
+The resulting SEM model was visualized using a path diagram to illustrate the relationships among latent variables and observed variables. The graph_sem function was utilized for this purpose.
+

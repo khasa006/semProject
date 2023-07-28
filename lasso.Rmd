@@ -1,0 +1,23 @@
+## Lasso Regression
+
+Lasso regression is a type of linear regression that uses a regularization term called L1 regularization to prevent overfitting and improve the model's generalizability. The L1 regularization term adds a penalty to the absolute value of the regression variables' coefficients. This shrinks some of the coefficients to zero and effectively performs feature selection. This means that the final model only has a subset of the most important variables. This can help to make the model easier to understand and use. Lasso regression is often used when there are a lot of variables and it's hard to figure out which ones are most important for predicting the outcome variable.
+
+The general equation for the Lasso regression model:
+
+$y=β_0+β_1 x_1+β_2 x_2+...+β_p x_p+ε; \text{subject to}∑∥β_j∥≤t$
+
+, where: y is the outcome variable,
+
+$x_1,x_2,...,x_p$ are the predictor variables,
+
+$β_0,β_1,β_2,...,β_p$ are the regression coefficients,
+
+$ε$ is the error term,
+
+$t$ is a constant that determines the amount of regularization,
+
+$|β_j|$ represents the absolute value of $β_j$.
+
+The goal of Lasso regression is to find the values of $β_0,β_1,β_2,...,β_p$ that minimize the sum of squared errors between the predicted and actual values of $y$, given that the sum of the absolute values of the coefficients is less than or equal to $t$. This makes it more likely that the number of coefficients will be small, and many of them will be shrunk to zero. The final model will only have the variables with coefficients that are not zero. This can help to simplify the model and make it easier to understand. The proposed study will use lasso regression to examine which metals and metals mixture are associated with birth anomalies and mothers health.
+
+

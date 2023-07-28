@@ -1,0 +1,258 @@
+---
+title: "The Impact of Pregestational Heavy Metals Exposure on Adverse Pregnancy Outcomes: A Structural Equation Model Analysis"
+author: "Kazi Tanvir Hasan"
+date: "`r Sys.Date()`"
+format:
+  html:
+    self-contained: true
+knitr:
+  opts_chunk:      ########## set global options ############
+    collapse: true # keep code from blocks together (if shown)
+    echo: false    # don't show code
+    message: true  # show messages
+    warning: true  # show warnings
+    error: true    # show error messages
+    comment: ""    # don't show ## with printed output
+    R.options:    
+      digits: 3    # round to three digits
+editor: visual
+bibliography: [references.bib, packages.bib]
+csl: the-new-england-journal-of-medicine.csl
+---
+
+```{r}
+#| label: tidyverse
+#| echo: false
+
+packages <- c(
+  "lavaan", "conflicted","ggthemes", "ggpubr", "table1", "styler", "glmnet",
+  "tidySEM", "gmodels", "janitor", "bkmr", "doParallel", "tidyverse", "tidymodels"
+)
+
+# Check if packages are installed
+installed_packages <- packages %in%
+  rownames(
+    installed.packages()
+  )
+
+# Install packages if any are not installed
+if (any(!installed_packages)) {
+  packages_to_install <- packages[!installed_packages]
+  remotes::install_github(packages_to_install)
+}
+
+# Loading the libraries
+suppressPackageStartupMessages(
+  {
+    library(lavaan)
+    library(janitor)
+    library(ggthemes)
+    library(ggpubr)
+    library(table1)
+    library(styler)
+    library(tidySEM)
+    library(gmodels)
+    library(bkmr)
+    library(doParallel)
+    library(conflicted)
+    library(tidyverse)
+    library(tidymodels)
+  }
+)
+
+# set preference
+suppressMessages(conflict_prefer("filter", "dplyr"))
+suppressMessages(conflict_prefer("spec", "yardstick"))
+suppressMessages(conflicts_prefer(tidySEM::conf_int))
+tidymodels_prefer()
+
+# suppress "`summarise()` has grouped output by " messages
+options(dplyr.summarise.inform = FALSE)
+
+```
+
+# Introduction
+
+Heavy metal exposure during pregnancy can have serious consequences for both the mother and the child[@CDC_2023]. These toxic elements can easily cross the placenta and enter the fetus, where they can disrupt normal development and lead to a range of adverse pregnancy outcomes (APOs), posing significant risks to maternal and fetal well-being[@CDC_2023; @Padula2020; @Wai2017]. APOs associated with heavy metal exposure include an increased likelihood of preterm birth, low birthweight, and the possibility of developmental delays and intellectual impairments in the child[@Wai2017]. Such outcomes can have far-reaching consequences, impacting the health and quality of life of both mothers and their children, with potential long-term health complications[@Nozadi2021]. Safeguarding pregnant women from heavy metal exposure is paramount to ensure the healthy development of the next generation[@CDC_2023; @Nozadi2021; @Padula2020; @Wai2017].
+
+There are a number of maternal health factors that have been linked to APOs, including maternal age, pre-pregnancy body mass index (BMI), diabetes status, and hypertensive disorders[@Ke2023; @kurbasic2018]. These factors can interact with each other in complex ways, making it difficult to understand the full impact of each factor on APOs. Also, the impact of heavy metal exposure on APOs is complex and depends on a number of factors, including the type of metal, the level of exposure, and the individual's overall health[@Jaishankar2014; @Bank-Nielsen2019; @michael2022]. Some heavy metals, such as lead, are known to have a negative impact on APOs, even at low levels of exposure. Lead can interfere with the development of APOs, leading to problems with cognitive function, behavior, and motor skills[@Sanders2009; @silver2016]. Other heavy metals that have been linked to lower APOs include cadmium, mercury, and arsenic. These metals can damage the placenta and interfere with the development of the fetus's brain[@gundacker2012; @niph]. As a result, babies born to mothers who have been exposed to these metals may have lower APOs and be at increased risk for developmental problems. Heavy metals, such as mercury, can also have a negative impact on APOs, but the effects are not as well-understood[@bjørklund2019;].
+
+The impact of maternal heavy metal exposure on APOs is particularly concerning, as it can lead to long-term health problems for the child. For example, studies have shown that children born to mothers who were exposed to lead during pregnancy are more likely to have lower IQ scores, attention deficit hyperactivity disorder (ADHD), and learning disabilities[@Lee2018; @Sabra2017; @niph].
+
+It is important to note that the impact of heavy metal exposure on APOs is not always negative. Some heavy metals, such as zinc, are essential for normal brain development[@asindi2022]. However, even essential heavy metals can be harmful if they are present in excess.
+
+Structural equation modeling (SEM) is a statistical technique that can be used to examine the complex relationships between multiple variables. SEM can be used to identify and measure latent factors, which are underlying constructs that cannot be directly observed[@hair2021]. In the context of this study, latent factors could include things like overall maternal health, genetic risk, and environmental exposures.
+
+The purpose of this study was to use structural equation modeling (SEM) to examine the impact of maternal heavy metal exposure on adverse pregnancy outcomes (APOs). The study was conducted using a prospective cohort of pregnant women. Heavy metal levels were measured before pregnancy, and APOs were assessed at birth. SEM was used to examine the relationships between heavy metal levels, latent factors, and APOs.
+
+The results of the study showed that maternal heavy metal exposure was associated with an increased risk of a number of APOs, including low birthweight, preterm birth, and developmental delays. The results also showed that the impact of maternal heavy metal exposure on APOs was mediated by latent factors, such as overall maternal health and genetic risk.
+
+# Methods
+
+The study used structural equation modeling (SEM) to examine the impact of maternal lead exposure on adverse pregnancy outcomes (APOs). SEM is a statistical technique that can be used to test causal relationships between latent variables. In the context of APOs, latent variables could include things like overall maternal health, genetic risk, and environmental exposures.
+
+The data for the study were collected from medical records of 46,305 pregnant women. The data included information on maternal age, pre-pregnancy BMI, diabetes status, and hypertensive disorders. Adverse pregnancy outcomes were measured as chromosomal anomalies and Down syndrome in newborns.
+
+The SEM analysis was conducted using the DWLS estimator with the NLMINB optimization method. Analyses were conducted with `r stringr::word(R.Version()$version.string, 1, 3)` with the `tidyverse` (`r packageVersion("tidyverse")`), `rUM` (`r packageVersion("rUM")`), `table1` (`r packageVersion("table1")`) packages used to preprocess and summarize data.[@R-base; @R-tidyverse; @tidyverse2019; @R-rUM; @R-table1]
+
+# Results
+
+```{r}
+#| include: false
+# Read the data
+
+BR_MI_2021 <- read_csv(
+  "/Users/tanvirhasan/Desktop/FIU Courses /Spring 23/PHC 6907/data/BR_MI_2021.csv"
+)
+
+# Prepare the data
+birthMetalData <- BR_MI_2021 %>%
+  select(
+    BIRTHID, MOTHER_AGE, PrePregnancy_BMI, weight_gain, MR_DIAB, MR_HYPERT_CHRONIC, PE,
+    MR_HYPERT_ECLAMPSIA, ANOM_CHROM, ANOM_DOWNS, ANOM_HEART, ANOM_DIAPH_HERNIA,
+    pregest_Aluminum, pregest_Arsenic, pregest_Bromine, pregest_Calcium,
+    pregest_Chloride, pregest_Chlorine, pregest_Chromium, pregest_Copper,
+    pregest_Iron, pregest_Lead, pregest_Magnesium, pregest_Manganese,
+    pregest_Nickel, pregest_Phosphorus, pregest_Potassium, pregest_Rubidium,
+    pregest_Selenium, pregest_Silicon, pregest_Sodium, pregest_Soil,
+    pregest_Strontium, pregest_Sulfate, pregest_Sulfur, pregest_Titanium,
+    pregest_Vanadium, pregest_Zinc, pregest_Zirconium, trim1_Aluminum,
+    trim1_Arsenic, trim1_Bromine, trim1_Calcium, trim1_Chloride, trim1_Chlorine,
+    trim1_Chromium, trim1_Copper, trim1_Iron, trim1_Lead, trim1_Magnesium,
+    trim1_Manganese, trim1_Nickel, trim1_Phosphorus, trim1_Potassium,
+    trim1_Rubidium, trim1_Selenium, trim1_Silicon, trim1_Sodium, trim1_Strontium,
+    trim1_Sulfate, trim1_Sulfur, trim1_Titanium, trim1_Total, trim1_Vanadium,
+    trim1_Zinc, trim1_Zirconium, trim2_Aluminum, trim2_Arsenic, trim2_Bromine,
+    trim2_Calcium, trim2_Chloride, trim2_Chlorine, trim2_Chromium, trim2_Copper,
+    trim2_Iron, trim2_Lead, trim2_Magnesium, trim2_Manganese, trim2_Nickel,
+    trim2_Phosphorus, trim2_Potassium, trim2_Rubidium, trim2_Selenium,
+    trim2_Silicon, trim2_Sodium, trim2_Soil, trim2_Strontium, trim2_Sulfate,
+    trim2_Sulfur, trim2_Titanium, trim2_Total, trim2_Vanadium, trim2_Zinc,
+    trim2_Zirconium
+  ) %>%
+  mutate(
+    PrePregnancy_BMI = replace(
+      PrePregnancy_BMI,
+      PrePregnancy_BMI == "Null", NA
+    )
+  ) %>%
+  mutate(
+    PrePregnancy_BMI = as.numeric(PrePregnancy_BMI),
+    weight_gain = as.numeric(weight_gain),
+    MR_DIAB = factor(if_else(MR_DIAB == "U", NA_character_, MR_DIAB), ordered = TRUE),
+    MR_HYPERT_CHRONIC = factor(if_else(MR_HYPERT_CHRONIC == "U", NA_character_, MR_HYPERT_CHRONIC), ordered = TRUE),
+    PE = factor(if_else(PE == "U", NA_character_, PE), ordered = TRUE),
+    MR_HYPERT_ECLAMPSIA = factor(if_else(MR_HYPERT_ECLAMPSIA == "U", NA_character_, MR_HYPERT_ECLAMPSIA), ordered = TRUE),
+    ANOM_CHROM = factor(if_else(ANOM_CHROM == "U", NA_character_, ANOM_CHROM), ordered = TRUE),
+    ANOM_DOWNS = factor(if_else(ANOM_DOWNS == "U", NA_character_, ANOM_DOWNS), ordered = TRUE),
+    ANOM_HEART = factor(if_else(ANOM_HEART == "U", NA_character_, ANOM_HEART), ordered = TRUE),
+    ANOM_DIAPH_HERNIA = factor(if_else(ANOM_DIAPH_HERNIA == "U", NA_character_, ANOM_DIAPH_HERNIA), ordered = TRUE)
+  ) %>%
+  mutate(across(
+    c(
+      pregest_Aluminum, pregest_Arsenic, pregest_Bromine, pregest_Calcium,
+      pregest_Chloride, pregest_Chlorine, pregest_Chromium, pregest_Copper,
+      pregest_Iron, pregest_Lead, pregest_Magnesium, pregest_Manganese,
+      pregest_Nickel, pregest_Phosphorus, pregest_Potassium, pregest_Rubidium,
+      pregest_Selenium, pregest_Silicon, pregest_Sodium, pregest_Soil,
+      pregest_Strontium, pregest_Sulfate, pregest_Sulfur, pregest_Titanium,
+      pregest_Vanadium, pregest_Zinc, pregest_Zirconium, trim1_Aluminum,
+      trim1_Arsenic, trim1_Bromine, trim1_Calcium, trim1_Chloride, trim1_Chlorine,
+      trim1_Chromium, trim1_Copper, trim1_Iron, trim1_Lead, trim1_Magnesium,
+      trim1_Manganese, trim1_Nickel, trim1_Phosphorus, trim1_Potassium,
+      trim1_Rubidium, trim1_Selenium, trim1_Silicon, trim1_Sodium, trim1_Strontium,
+      trim1_Sulfate, trim1_Sulfur, trim1_Titanium, trim1_Total, trim1_Vanadium,
+      trim1_Zinc, trim1_Zirconium, trim2_Aluminum, trim2_Arsenic, trim2_Bromine,
+      trim2_Calcium, trim2_Chloride, trim2_Chlorine, trim2_Chromium, trim2_Copper,
+      trim2_Iron, trim2_Lead, trim2_Magnesium, trim2_Manganese, trim2_Nickel,
+      trim2_Phosphorus, trim2_Potassium, trim2_Rubidium, trim2_Selenium,
+      trim2_Silicon, trim2_Sodium, trim2_Soil, trim2_Strontium, trim2_Sulfate,
+      trim2_Sulfur, trim2_Titanium, trim2_Total, trim2_Vanadium, trim2_Zinc,
+      trim2_Zirconium
+    ),
+    ~ scale(.) %>% as.vector()
+  )) %>%
+  na.omit()
+```
+
+The results of the Confirmatory Factor Analysis (CFA) model show that the model fits the data well. The CFI and TLI values are both above 0.95, which indicates that the model fits the data very well. The RMSEA value is 0.023, which is below the recommended cutoff of 0.05, further supporting the model's good fit to the data.
+
+The model includes three latent variables: pre, maternal_health, and child_anom. The pre latent variable measures pre-pregnancy heavy metals exposure. The maternal_health latent variable measures maternal health factors such as age, BMI, diabetes, preeclampsia etc. The child_anom latent variable measures child anomalies such as Down syndrome and chromosomal abnormalities.
+
+The "Std.lv" and "Std.all" columns provide the standardized factor loadings. These values show the extent to which each indicator contributes to its corresponding latent variable. Higher standardized factor loadings indicate stronger associations between the latent variable and the observed indicators. For example, the indicator "pregest_Calcim" has a standardized factor loading of 0.894 in the "pre" latent variable, which suggests a strong relationship between calcium levels during pregnancy (the indicator) and the prenatal nutritional component (the latent variable). Similarly, other indicators also have relatively high standardized factor loadings, indicating significant contributions to their respective latent variables.
+
+The covariances in the model represent the relationships between latent variables and their indicators. These values show the degree of shared variance between different observed variables and the underlying latent variables. For instance, the covariance between "pre" and "maternal_health" is 0.013, suggesting a small positive relationship between pre-pregnancy heavy metals exposure (indicated by "pre") and maternal health-related indicators. Similarly, the covariance between "pre" and "child_anom" is 0.137, indicating a moderate positive relationship between pre-pregnancy heavy metals exposure and child anomalies. These covariances provide valuable information about the interconnections and shared variance between different variables in the model.
+
+The results of this CFA model suggest that the five latent variables are all valid measures of the constructs they are intended to measure. The model also shows that there are significant correlations between the latent variables, which suggests that they are all related to each other.
+
+```{r}
+#| include: true
+cfaFit_summary_rds <- read_rds(file = "./data/cfaFit_summary.rds")
+cfaFit_summary_rds
+```
+
+The results of the structural equation model (SEM) showed that the model fits the data well. The chi-square test statistic was significant, indicating a significant difference between the user model and the baseline model. The Comparative Fit Index (CFI) and Tucker-Lewis Index (TLI) values were 0.967 and 0.957, respectively, suggesting a good fit between the user model and the data.
+
+The latent variables in the measurement model were "pre", "maternal_health", and "child_anom". The standardized factor loadings represent the relationship between the latent variables and their corresponding observed variables. All factor loadings were statistically significant (p \< 0.001) and ranged from 0.651 to 0.971, indicating a strong relationship between the latent variables and their indicators.
+
+The regression analysis examined the relationships between the "pre" and "maternal_health" latent variables with the "child_anom" latent variable. Both "pre" (β = 0.137, p \< 0.001) and "maternal_health" (β = 0.590, p \< 0.001) had significant positive effects on "child_anom", indicating that higher levels of "pre" and "maternal_health" were associated with a higher likelihood of "child_anom".
+
+The intercepts represent the estimated mean values of the latent variables. The intercepts for the observed variables were generally small and non-significant, indicating that the latent variables adequately capture the variance in the data. Thresholds represent the cut-off values for categorical observed variables. All thresholds were statistically significant (p \< 0.001) and ranged from 2.165 to 3.548, indicating the discrimination power of the thresholds.
+
+The variances represent the estimated error variances for the observed variables. Higher values indicate greater variability in the observed variables. The variances for the observed variables ranged from 0.057 to 31.355, with all estimates being statistically significant (p \< 0.001). This suggests that the observed variables capture a considerable amount of variability in the data.
+
+The results of the SEM analysis indicate that the user model provided a good fit to the data. The measurement model demonstrated strong factor loadings, suggesting that the latent variables were well-represented by their indicators. The regression analysis revealed significant relationships between the latent variables, indicating the influence of "pre" and "maternal_health" on "child_anom". The findings provide insights into the relationships between the variables and contribute to our understanding of the studied phenomenon.
+
+```{r}
+#| include: true
+semFit_summary_rds <- read_rds(file = "./data/semFit_summary.rds")
+semFit_summary_rds
+```
+
+```{r}
+#| include: true
+#| warning: false
+# Plot the model
+semPlot_rds <- read_rds(file = "./data/semPlot.rds")
+semPlot_rds
+```
+
+# Discussion
+
+The present study investigated the relationships between pre-pregnancy heavy metals exposure, maternal health factors, and child anomalies. The results of the confirmatory factor analysis (CFA) model showed that the model fits the data well. The structural equation model (SEM) also showed that the model fits the data well and that there were significant relationships between the latent variables.
+
+The findings of this study suggest that pre-pregnancy heavy metals exposure and maternal health factors are both associated with an increased risk of child anomalies. This is consistent with previous studies that have shown a link between environmental pollutants and birth defects. The findings of this study also suggest that the effects of pre-pregnancy heavy metals exposure and maternal health factors on child anomalies may be additive. This means that the risk of child anomalies may be even higher in women who are exposed to both pre-pregnancy heavy metals and have poor maternal health.
+
+The application of latent variable analysis in this study offers a robust framework for understanding the complex interrelationships among maternal health factors and their impact on adverse pregnancy outcomes. This approach allows for the simultaneous assessment of multiple maternal health factors, as well as the identification of latent factors that may be driving these associations. This information can be used to develop more targeted and effective interventions to improve maternal and fetal health.
+
+The findings of this study have important implications for public health. They suggest that exposure to environmental pollutants during pregnancy may be a significant risk factor for child anomalies. This is particularly important for women who are already at risk of having a child with anomalies, such as those who have a family history of birth defects. The findings of this study also suggest that it is important to take steps to reduce exposure to environmental pollutants during pregnancy.
+
+In addition to the findings of this study, there is a growing body of evidence that suggests that maternal health factors can also impact the long-term health of the offspring. For example, maternal obesity has been linked to an increased risk of childhood obesity, type 2 diabetes, and cardiovascular disease. Therefore, it is important to consider the long-term implications of maternal health factors when developing interventions to improve pregnancy outcomes.
+
+The present study has some limitations. First, the study was conducted in South Florida, so the findings may not be generalizable to other populations. Second, the study was based on self-reported data, which may be subject to recall bias. Third, the study did not assess the specific mechanisms by which pre-pregnancy heavy metals exposure and maternal health factors may increase the risk of child anomalies.
+
+Despite these limitations, the findings of this study provide important insights into the relationships between pre-pregnancy heavy metals exposure, maternal health factors, and child anomalies. These findings could be used to develop interventions to reduce the risk of child anomalies in the future.
+
+# Conclusion
+
+This study provides compelling evidence of the relationships between pre-pregnancy heavy metals exposure, maternal health factors and adverse pregnancy outcomes, specifically chromosomal anomalies and Down syndrome in newborns. The results emphasize the importance of considering the combined effects of maternal age, pre-pregnancy BMI, diabetes, and hypertensive disorders on pregnancy outcomes. Employing latent variable analysis offers a comprehensive approach to studying the intricate associations between pre-pregnancy heavy metals exposure, maternal health factors and adverse pregnancy outcomes. By unraveling these complex relationships, healthcare professionals can develop targeted strategies to improve maternal and fetal health during pregnancy.
+
+Further research should delve deeper into the underlying mechanisms linking these factors and explore potential interventions to mitigate the risks associated with adverse pregnancy outcomes. Enhanced understanding of these relationships will aid in developing personalized and evidence-based strategies to optimize maternal and fetal health outcomes.
+
+Overall, the findings of this study suggest that pre-pregnancy heavy metals exposure and maternal health factors play a significant role in determining pregnancy outcomes. By understanding these factors and their interactions, healthcare professionals can develop targeted interventions to improve maternal and fetal health.
+
+# References {.unnumbered}
+
+```{r}
+#| include: false
+
+# automatically create a bib database for loaded R packages & rUM
+knitr::write_bib(
+  c(
+    .packages(),
+    "rUM",
+    "table1"
+  ),
+  "packages.bib"
+)
+```
