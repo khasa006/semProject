@@ -273,7 +273,7 @@ semFit_summary_rds <- read_rds(file = "./data/semFit_summary.rds")
 pander::pander(semFit_summary_rds)
 ```
 
-![semPlot](semPlot.png)
+![](semPlot.png)
 
 # Discussion
 
