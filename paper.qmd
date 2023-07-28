@@ -77,10 +77,8 @@ tidymodels_prefer()
 options(dplyr.summarise.inform = FALSE)
 
 ```
+
 ::: justify
-
-
-
 # Introduction
 
 Heavy metal exposure during pregnancy can have serious consequences for both the mother and the child[@CDC_2023]. These toxic elements can easily cross the placenta and enter the fetus, where they can disrupt normal development and lead to a range of adverse pregnancy outcomes (APOs), posing significant risks to maternal and fetal well-being[@CDC_2023; @Padula2020; @Wai2017]. APOs associated with heavy metal exposure include an increased likelihood of preterm birth, low birthweight, and the possibility of developmental delays and intellectual impairments in the child[@Wai2017]. Such outcomes can have far-reaching consequences, impacting the health and quality of life of both mothers and their children, with potential long-term health complications[@Nozadi2021]. Safeguarding pregnant women from heavy metal exposure is paramount to ensure the healthy development of the next generation[@CDC_2023; @Nozadi2021; @Padula2020; @Wai2017].
@@ -97,18 +95,17 @@ The purpose of this study was to use structural equation modeling (SEM) to exami
 
 The results of the study showed that maternal heavy metal exposure was associated with an increased risk of a number of APOs, including low birthweight, preterm birth, and developmental delays. The results also showed that the impact of maternal heavy metal exposure on APOs was mediated by latent factors, such as overall maternal health and genetic risk.
 
-
-
 # Methods
 
-The study used structural equation modeling (SEM) to examine the impact of maternal lead exposure on adverse pregnancy outcomes (APOs). SEM is a statistical technique that can be used to test causal relationships between latent variables. In the context of APOs, latent variables could include things like overall maternal health, genetic risk, and environmental exposures.
+This study used data from several databases (Florida Vital Statistics, EPA's Air quality System etc.) to evaluate the relationship between air pollution and birth outcomes of pregnant residents in South Florida (Broward, Miami-Dade and Palm Beach Counties). 
 
-The data for the study were collected from medical records of 46,305 pregnant women. The data included information on maternal age, pre-pregnancy BMI, diabetes status, and hypertensive disorders. Adverse pregnancy outcomes were measured as chromosomal anomalies and Down syndrome in newborns.
+The study included all live singleton births in South Florida from 2020 to 2021. The data for the study were collected from medical records of 46,305 pregnant women. The data included information on maternal age, pre-pregnancy BMI, diabetes status, and hypertensive disorders. Adverse pregnancy outcomes were measured as chromosomal anomalies and Down syndrome in newborns.
 
+Air-quality and meteorological data were obtained from the EPA’s Air Quality System. For each sample, data were linked by residence county and then averaged by trimester.
 
 ## Lasso Regression
 
-Lasso regression is a type of linear regression that uses a regularization term called L1 regularization to prevent overfitting and improve the model's generalizability. The L1 regularization term adds a penalty to the absolute value of the regression variables' coefficients. This shrinks some of the coefficients to zero and effectively performs feature selection. This means that the final model only has a subset of the most important variables. This can help to make the model easier to understand and use. Lasso regression is often used when there are a lot of variables and it's hard to figure out which ones are most important for predicting the outcome variable.
+Lasso regression is a type of linear regression that uses a regularization term called L1 regularization to prevent overfitting and improve the model's generalizability[@tibshirani1996; ]. The L1 regularization term adds a penalty to the absolute value of the regression variables' coefficients. This shrinks some of the coefficients to zero and effectively performs feature selection. This means that the final model only has a subset of the most important variables. This can help to make the model easier to understand and use. Lasso regression is often used when there are a lot of variables and it's hard to figure out which ones are most important for predicting the outcome variable[@tibshirani1996; @friedman2010; @fonti2017feature].
 
 The general equation for the Lasso regression model:
 
@@ -126,33 +123,31 @@ $t$ is a constant that determines the amount of regularization,
 
 $|β_j|$ represents the absolute value of $β_j$.
 
-The goal of Lasso regression is to find the values of $β_0,β_1,β_2,...,β_p$ that minimize the sum of squared errors between the predicted and actual values of $y$, given that the sum of the absolute values of the coefficients is less than or equal to $t$. This makes it more likely that the number of coefficients will be small, and many of them will be shrunk to zero. The final model will only have the variables with coefficients that are not zero. This can help to simplify the model and make it easier to understand. The proposed study will use lasso regression to examine which metals and metals mixture are associated with birth anomalies and mothers health.
+The goal of Lasso regression is to find the values of $β_0,β_1,β_2,...,β_p$ that minimize the sum of squared errors between the predicted and actual values of $y$, given that the sum of the absolute values of the coefficients is less than or equal to $t$. This makes it more likely that the number of coefficients will be small, and many of them will be shrunk to zero. The final model will only have the variables with coefficients that are not zero. This can help to simplify the model and make it easier to understand[@tibshirani1996; @breiman1995]. The proposed study will use lasso regression to examine which metals and metals mixture are associated with birth anomalies and mothers health.
 
+## Structural Equation Modeling (SEM)
 
-## Structural Equation Modeling (SEM) 
-
-Structural equation modeling (SEM) is a multivariate statistical technique that is used to examine complex relationships among variables and test theoretical models. It allows researchers to assess both the direct and indirect effects of latent constructs on observed variables, making it valuable for investigating complex research questions. In SEM, researchers begin by specifying a theoretical model that represents the hypothesized relationships between latent constructs and observed variables. The model is represented graphically using path diagrams, illustrating the relationships between constructs and their indicators.
+Structural equation modeling (SEM) is a multivariate statistical technique that is used to examine complex relationships among variables and test theoretical models[@beran2010]. It allows researchers to assess both the direct and indirect effects of latent constructs on observed variables, making it valuable for investigating complex research questions. In SEM, researchers begin by specifying a theoretical model that represents the hypothesized relationships between latent constructs and observed variables[@beran2010; @fan2016]. The model is represented graphically using path diagrams, illustrating the relationships between constructs and their indicators.
 
 ### Confirmatory Factor Analysis (CFA)
 
-CFA is a subset of SEM used to assess the measurement properties of the latent constructs by examining their relationships with observed indicators. It helps confirm whether the observed variables adequately measure the underlying constructs. Researchers specify the model by defining the factor loadings, which represent the strength of the relationship between each observed indicator and its corresponding latent construct, and potentially adding covariances between the indicators. For CFA to yield meaningful results, several assumptions must be met, including:
+CFA is a subset of SEM used to assess the measurement properties of the latent constructs by examining their relationships with observed indicators. It helps confirm whether the observed variables adequately measure the underlying constructs[@mueller2001a]. Researchers specify the model by defining the factor loadings, which represent the strength of the relationship between each observed indicator and its corresponding latent construct, and potentially adding covariances between the indicators[@mueller2001a; @yadav2022]. For CFA to yield meaningful results, several assumptions must be met, including:
 
-* Each latent construct should be measured by multiple observed indicators.
+-   Each latent construct should be measured by multiple observed indicators.
 
-* The observed indicators should be related to their respective constructs.
+-   The observed indicators should be related to their respective constructs.
 
-* The measurement errors of the observed indicators should be uncorrelated.
+-   The measurement errors of the observed indicators should be uncorrelated.
 
-To evaluate the goodness of fit of the CFA model, various fit indices are used, such as the chi-square test, Comparative Fit Index (CFI), Tucker-Lewis Index (TLI), Root Mean Square Error of Approximation (RMSEA), and Standardized Root Mean Square Residual (SRMR). Researchers should aim for a good fit of the model to the data, as indicated by values close to 1 for CFI and TLI, and low values (e.g., below 0.08) for RMSEA and SRMR.
+To evaluate the goodness of fit of the CFA model, various fit indices are used, such as the chi-square test, Comparative Fit Index (CFI), Tucker-Lewis Index (TLI), Root Mean Square Error of Approximation (RMSEA), and Standardized Root Mean Square Residual (SRMR). Researchers should aim for a good fit of the model to the data, as indicated by values close to 1 for CFI and TLI, and low values (e.g., below 0.08) for RMSEA and SRMR[@xia2018; @cangur2015].
 
 ### Structural Model and Path Analysis
 
-Once the measurement model (CFA) is confirmed, researchers can proceed to test the structural model, which examines the relationships between the latent constructs. This involves estimating the paths between constructs and testing for direct and indirect effects. Researchers can also include covariances between constructs or other exogenous variables in the model.
+Once the measurement model (CFA) is confirmed, researchers can proceed to test the structural model, which examines the relationships between the latent constructs. This involves estimating the paths between constructs and testing for direct and indirect effects. Researchers can also include covariances between constructs or other exogenous variables in the model[@allen2017; @mueller2001a; @hair2021].
 
-Estimation of the model is typically done using maximum likelihood estimation (ML) or other appropriate techniques, aiming to find the best-fitting model that accounts for the observed data. It is common to modify the initial model based on theoretical considerations and modification indices (suggestions for model improvement). Iteration may be required to arrive at a more accurate representation of the underlying relationships.
+Estimation of the model is typically done using maximum likelihood estimation (ML) or other appropriate techniques, aiming to find the best-fitting model that accounts for the observed data[@fan2016; @Shi2020]. It is common to modify the initial model based on theoretical considerations and modification indices (suggestions for model improvement). Iteration may be required to arrive at a more accurate representation of the underlying relationships[@Gunzler2015; @Deng2018].
 
-Structural Equation Modeling with Confirmatory Factor Analysis is a robust statistical approach to test complex theoretical models and explore the relationships between latent constructs and observed variables. It allows researchers to gain insights into the underlying structure of their data and provide evidence for the validity of their measurement instruments. Properly conducted SEM can significantly contribute to the advancement of research in various fields.
-
+Structural Equation Modeling with Confirmatory Factor Analysis is a robust statistical approach to test complex theoretical models and explore the relationships between latent constructs and observed variables[@fan2016]. It allows researchers to gain insights into the underlying structure of their data and provide evidence for the validity of their measurement instruments. Properly conducted SEM can significantly contribute to the advancement of research in various fields[@Deng2018; @fan2016; @beran2010].
 
 ## Data Analysis
 
@@ -170,12 +165,9 @@ Next, a Structural Equation Model (SEM) was extended from the CFA model to inclu
 
 The SEM model was fitted to the data using the diagonally weighted least squares (DWLS) estimator. Model fit measures, such as chi-square, degrees of freedom, Root Mean Square Error of Approximation (RMSEA), Comparative Fit Index (CFI), and Tucker-Lewis Index (TLI), were computed to assess model fit. Standardized estimates for factor loadings and path coefficients were also examined.
 
-The resulting SEM model was visualized using a path diagram to illustrate the relationships among latent variables and observed variables. The graph_sem function was utilized for this purpose.
+The resulting SEM model was visualized using a path diagram to illustrate the relationships among latent variables and observed variables.
 
-
-
-
-The SEM analysis was conducted using the DWLS estimator with the NLMINB optimization method. Analyses were conducted with `r stringr::word(R.Version()$version.string, 1, 3)` with the `tidyverse` (`r packageVersion("tidyverse")`), `rUM` (`r packageVersion("rUM")`), `table1` (`r packageVersion("table1")`) packages used to preprocess and summarize data.[@R-base; @R-tidyverse; @tidyverse2019; @R-rUM; @R-table1]
+The SEM analysis was conducted using the DWLS estimator with the NLMINB optimization method. Analyses were conducted with `r stringr::word(R.Version()$version.string, 1, 3)` with the `lavaan` (`r packageVersion("lavaan")`), `tidyverse` (`r packageVersion("tidyverse")`), `rUM` (`r packageVersion("rUM")`), `table1` (`r packageVersion("table1")`) packages used to preprocess and summarize data.[@R-base; @R-tidyverse; @tidyverse2019; @R-rUM; @R-table1]
 
 # Results
 
@@ -185,6 +177,7 @@ The mother health characteristics in the study are shown in Table 1. The average
 health_descrip <- read_rds(file = "./data/health_descrip.rds")
 health_descrip
 ```
+
 Table 2 compares three Lasso Regression models (lasso regression with three different time points) on four metrics. The metrics are accuracy, sensitivity, specificity, and ROC AUC. ROC AUC is a performance metric that quantifies the overall performance of the model in binary classification tasks. The ROC AUC values for the three models were 0.43, 0.48, and 0.41, respectively. These results suggest that the lasso regression model with trimester 1 is the best model for predicting the outcome of a pregnancy (child birth anomalies).
 
 ```{r}
@@ -238,14 +231,13 @@ compare_table %>%
   cols_label(Metric = "Metric", Pre = "Pre", Trim1 = "Trim1", Trim2 = "Trim2")
 ```
 
-The variable importance plot (VIP plot) in Figure 1 shows the most important metals in trimester 1. The VIP plot is a measure of how important each metal is for predicting the outcome of a pregnancy. The metals with the highest VIP scores are the most important for predicting the child birth anomalies. The three most important metals in trimester 1 are zirconium, vanadium, and zinc. These metals have the highest VIP scores, which means that they are the most important for predicting the child birth anomalies. We used the top three most important metals (zirconium, vanadium, and zinc) in our SEM analysis. 
+The variable importance plot (VIP plot) in Figure 1 shows the most important metals in trimester 1. The VIP plot is a measure of how important each metal is for predicting the outcome of a pregnancy. The metals with the highest VIP scores are the most important for predicting the child birth anomalies. The three most important metals in trimester 1 are zirconium, vanadium, and zinc. These metals have the highest VIP scores, which means that they are the most important for predicting the child birth anomalies. We used the top three most important metals (zirconium, vanadium, and zinc) in our SEM analysis.
 
 ```{r}
 test_vip_rds <- read_rds(file = "./data/test_vip.rds")
 test_vip_rds +
   ggtitle("Figure 1: Variable importance Plot")
 ```
-
 
 The results of the Confirmatory Factor Analysis (CFA) model show that the model fits the data well. The CFI and TLI values are both above 0.99, which indicates that the model fits the data very well. The RMSEA value is 0.012, which is below the recommended cutoff of 0.05, further supporting the model's good fit to the data.
 
@@ -281,14 +273,7 @@ semFit_summary_rds <- read_rds(file = "./data/semFit_summary.rds")
 pander::pander(semFit_summary_rds)
 ```
 
-```{r}
-#| include: true
-#| warning: false
-# Plot the model
-semPlot_rds <- read_rds(file = "./data/semPlot.rds")
-semPlot_rds +
-   ggtitle("Figure 2: Structural Equation Model")
-```
+![semPlot](semPlot.png)
 
 # Discussion
 
@@ -296,11 +281,11 @@ The present study investigated the relationships between maternal heavy metals e
 
 The findings of this study suggest that maternal heavy metals exposure and maternal health factors are both associated with an increased risk of child anomalies. This is consistent with previous studies that have shown a link between environmental pollutants and birth defects. The findings of this study also suggest that the effects of maternal heavy metals exposure and maternal health factors on child anomalies may be additive. This means that the risk of child anomalies may be even higher in women who are exposed to both maternal heavy metals and have poor maternal health.
 
-The application of latent variable analysis in this study offers a robust framework for understanding the complex interrelationships among maternal health factors and their impact on adverse pregnancy outcomes. This approach allows for the simultaneous assessment of multiple maternal health factors, as well as the identification of latent factors that may be driving these associations. This information can be used to develop more targeted and effective interventions to improve maternal and fetal health.
+The application of latent variable analysis in this study offers a robust framework for understanding the complex interrelationships among maternal health factors and their impact on adverse pregnancy outcomes[@Mainolfi2013]. This approach allows for the simultaneous assessment of multiple maternal health factors, as well as the identification of latent factors that may be driving these associations. This information can be used to develop more targeted and effective interventions to improve maternal and fetal health[@Mainolfi2013;@Mitku2021].
 
 The findings of this study have important implications for public health. They suggest that exposure to environmental pollutants during pregnancy may be a significant risk factor for child anomalies. This is particularly important for women who are already at risk of having a child with anomalies, such as those who have a family history of birth defects. The findings of this study also suggest that it is important to take steps to reduce exposure to environmental pollutants during pregnancy.
 
-In addition to the findings of this study, there is a growing body of evidence that suggests that maternal health factors can also impact the long-term health of the offspring. For example, maternal obesity has been linked to an increased risk of childhood obesity, type 2 diabetes, and cardiovascular disease. Therefore, it is important to consider the long-term implications of maternal health factors when developing interventions to improve pregnancy outcomes.
+In addition to the findings of this study, there is a growing body of evidence that suggests that maternal health factors can also impact the long-term health of the offspring. For example, maternal obesity has been linked to an increased risk of childhood obesity, type 2 diabetes, and cardiovascular disease[@Godfrey2017;@Kankowski2022]. Therefore, it is important to consider the long-term implications of maternal health factors when developing interventions to improve pregnancy outcomes.
 
 The present study has some limitations. First, the study was conducted in South Florida, so the findings may not be generalizable to other populations. Second, the study was based on self-reported data, which may be subject to recall bias. Third, the study did not assess the specific mechanisms by which maternal heavy metals exposure and maternal health factors may increase the risk of child anomalies.
 
@@ -330,4 +315,3 @@ knitr::write_bib(
   "packages.bib"
 )
 ```
-
