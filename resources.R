@@ -50,6 +50,11 @@ test_roc_plot_rds <- read_rds(file = "./data/test_roc_plot.rds")
 test_roc_rds <- read_rds(file = "./data/test_roc.rds")
 
 
+# Descriptive  Results
+
+health_descrip <- read_rds(file = "./data/health_descrip.rds")
+
+
 # SEM Results
 
 cfaFit_summary_rds <- read_rds(file = "./data/cfaFit_summary.rds")
